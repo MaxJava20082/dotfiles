@@ -1,8 +1,10 @@
-# brew bundle --file=~/.config/Brewfile
+# macOS и Ubuntu: везде Homebrew.
+# brew bundle --file=~/.config/dotfiles/Brewfile
 
 # --- Терминальные инструменты ---
 brew "git"
 brew "gh"
+brew "zsh"
 brew "neovim"
 brew "tmux"
 brew "lazygit"
@@ -14,6 +16,7 @@ brew "tree-sitter-cli"
 brew "curl"
 brew "wget"
 brew "unzip"
+brew "zip"            # нужен SDKMAN
 
 # --- Shell и утилиты ---
 brew "bat"            # cat с подсветкой (alias cat=bat)
@@ -36,10 +39,18 @@ brew "rust"           # selene, codelldb, rust extra
 brew "lua"
 brew "luajit"
 brew "luarocks"       # luacheck
-brew "llvm"           # clang, нужен для сборки treesitter-парсеров
 brew "cmake"
 brew "go"
 # Java (jdtls, checkstyle, spring-javaformat) и maven ставятся через SDKMAN, см. install.sh
 
-# --- Шрифт (иконки в nvim, eza, lazygit, p10k) ---
-cask "font-jetbrains-mono-nerd-font"
+if OS.mac?
+  brew "llvm"         # clang для сборки treesitter-парсеров (рядом с Xcode CLT)
+  # Шрифт для иконок (nvim, eza, lazygit, p10k)
+  cask "font-jetbrains-mono-nerd-font"
+end
+
+if OS.linux?
+  brew "gcc"          # C-компилятор для treesitter и сборки формул из исходников
+  brew "xclip"        # системный буфер обмена для nvim/tmux (X11)
+  # Шрифт на Linux ставится в install.sh (cask'ов в Linuxbrew нет)
+end

@@ -2,9 +2,10 @@
 
 ## Перед первым запуском install.sh
 
-- **Только macOS на Apple Silicon.** Пути Homebrew вида `/opt/homebrew`, на Intel Mac или Linux скрипт не рассчитан.
+- **Поддерживаются macOS (Apple Silicon и Intel) и Ubuntu/Debian.** Пакеты везде через Homebrew. На других дистрибутивах скрипт предупредит, но `apt`-шаг не сработает.
+- **Ubuntu: нужен `sudo`.** Он используется для `apt-get install` зависимостей Homebrew и для `chsh`/`/etc/shells`. Homebrew ставится в `/home/linuxbrew/.linuxbrew`. Не запускай скрипт от root: Homebrew это запрещает.
 - **Сначала `./install.sh --dry-run`.** Он ничего не меняет и показывает все шаги.
-- **Xcode Command Line Tools.** Если их нет, скрипт запускает `xcode-select --install` и завершается. Дождись окончания установки в окне macOS и запусти скрипт снова.
+- **macOS: Xcode Command Line Tools.** Если их нет, скрипт запускает `xcode-select --install` и завершается. Дождись окончания установки в окне macOS и запусти скрипт снова.
 - **Первый запуск долгий.** `brew bundle` (llvm, rust, ffmpeg и другое), SDKMAN и Mason занимают от 10 до 30 минут и несколько гигабайт.
 - **Нужен интернет** на всех шагах, включая первый запуск nvim.
 
@@ -18,7 +19,6 @@
 ## Публичный репозиторий
 
 - Репозиторий публичный: всё в нём видно всем. Перед пушем проверь `git ls-files` и `git diff` на токены, ключи, пароли и внутренние адреса.
-- В `zsh/zshrc` есть путь `/Users/maxim/.local/bin`, на другом пользователе он не сработает (заменить на `$HOME/.local/bin`).
 - `zsh/p10k.zsh` (около 90 КБ) генерируется `p10k configure`. Это не секрет, но объёмный файл.
 - Папки `~/.config/anthropic`, `github-copilot`, `configstore` лежат вне репозитория и в него не попадают. Не копируй их в `dotfiles`: там могут быть токены.
 - `lazygit/state.yml` в `.gitignore`: там история и пути к локальным проектам.
@@ -61,6 +61,17 @@
 - SDKMAN-блок в `.zshrc` должен оставаться в самом конце файла. Не добавляй ничего после него.
 - Powerlevel10k без Nerd Font выглядит сломанным. Выбери `JetBrainsMono Nerd Font` в терминале (iTerm2: Profiles, Text, Font).
 
+## Различия macOS и Ubuntu
+
+- **Brewfile с условиями:** `llvm` и cask шрифта только на macOS; `gcc` и `xclip` только на Linux. Casks в Linuxbrew не существуют, поэтому шрифт на Ubuntu скачивается скриптом в `~/.local/share/fonts`.
+- **Шрифт при SSH:** отрисовывает иконки терминал на твоей локальной машине. Ставить шрифт на удалённый сервер бессмысленно.
+- **Линукс-бинарники из Homebrew** собираются/ставятся в `/home/linuxbrew/.linuxbrew`. Часть формул (например `llvm`, `ffmpeg`) на слабой машине собирается долго, если нет готовых bottle.
+- **Буфер обмена:** на macOS работает `pbcopy`. На Ubuntu нужен `xclip` (X11) или `wl-clipboard` (Wayland). Без них копирование из nvim и tmux в систему не работает. На headless-сервере буфера нет вообще.
+- **Homebrew в PATH:** блок в начале `zsh/zshrc` ищет brew во всех типичных местах. В `~/.zprofile` на macOS строка `brew shellenv` может остаться, дублирование безвредно.
+- **`chsh` на Ubuntu** запросит пароль. Новый shell подхватится после перелогина.
+- **Docker:** плагин `docker` в OMZ лишь даёт алиасы и автодополнение. Сам Docker (Desktop или Engine) в Brewfile не ставится.
+- **Не проверено на реальной Ubuntu.** Скрипт и Brewfile написаны по документации Homebrew и проверены только `--dry-run` на macOS. Первый запуск на чистой Ubuntu лучше делать в VM или контейнере.
+
 ## Java
 
 - Java и Maven ставятся через SDKMAN, а не brew. `install.sh` вызывает `sdk install java` и `sdk install maven` в неинтерактивном режиме и берёт версию по умолчанию. Если нужна конкретная (например 21), поставь её сам: `sdk install java 21.x.y-tem`.
@@ -77,6 +88,6 @@ lazygit --version && bat --version && yazi --version
 
 ## Что не покрыто
 
-- Нет Linux-версии и Intel-варианта.
+- Нет других ОС и дистрибутивов (Fedora, Arch, Windows/WSL не проверялись).
 - Нет конфигов iTerm2, Raycast, htop, qBittorrent и прочего из `~/.config`: в репозиторий они не входят.
-- Нет автоматических тестов установки на чистой системе. `install.sh` проверялся только через `--dry-run` и на этой машине, где всё уже установлено.
+- Нет автоматических тестов установки на чистой системе. `install.sh` проверялся только через `--dry-run` на macOS, где всё уже установлено. На Ubuntu не запускался.
