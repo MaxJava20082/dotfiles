@@ -1,0 +1,35 @@
+gui:
+  language: "en"
+  showIcons: true
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#7aa2f7" # Фирменный синий (Tokyo Night Blue)
+      - "bold"
+    inactiveBorderColor:
+      - "#414868" # Темно-серый для неактивных окон
+    searchingActiveBorderColor:
+      - "#bb9af7" # Фиолетовый при поиске
+    optionsTextColor:
+      - "#565f89" # Приглушенный сине-серый для подсказок снизу
+    selectedLineBgColor:
+      - "#2f3549" # Цвет фона для выделенной строки
+    selectedRangeBgColor:
+      - "#2f3549" # Цвет фона для выделенного диапазона строк
+    cherryPickedCommitFgColor:
+      - "#9ece6a" # Зеленый для cherry-pick
+    cherryPickedCommitBgColor:
+      - "#bb9af7" # Фиолетовый
+    markedBaseCommitFgColor:
+      - "#e0af68" # Оранжево-желтый для базового коммита
+    unstagedChangesColor:
+      - "#f7768e" # Красный для неизмененных/staged файлов
+    defaultFgColor:
+      - "#c0caf5" # Основной светло-серый текст
+git:
+  diffRenderers:
+    - colorArg: always
+      command: delta --dark --paging=never --syntax-theme="OneHalfDark"
+
+os:
+  edit: "nvim" # Открывает nvim в той же сессии терминала
