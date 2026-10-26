@@ -1,16 +1,2 @@
-# Белый список: в репозиторий попадают только эти конфиги
-/*
-!/.gitignore
-!/README.md
-!/Brewfile
-!/install.sh
-!/docs/
-!/nvim/
-!/lazygit/
-!/tmux/
-!/zsh/
-!/bat/
-
 .DS_Store
 lazygit/state.yml
-nvim/lazy-lock.json.bak

@@ -16,14 +16,14 @@ install.sh автоустановка
 ## Быстрый старт
 
 ```sh
-git clone https://github.com/<user>/dotfiles ~/.config
-cd ~/.config
+git clone https://github.com/<user>/dotfiles ~/.config/dotfiles
+cd ~/.config/dotfiles
 ./install.sh            # ./install.sh --dry-run покажет шаги без изменений
 ```
 
 Скрипт идемпотентный: существующие файлы переименовываются в `*.bak.<timestamp>`, а не затираются.
 
-Если `~/.config` уже существует и не пуст, клонируй в другое место (например, `~/dotfiles`): `install.sh` сам создаст symlink'и в `~/.config`.
+`install.sh` сам создаёт symlink'и: `~/.config/{nvim,lazygit,bat}`, `~/.zshrc`, `~/.p10k.zsh`, `~/.tmux.conf`. Репозиторий можно клонировать и в другое место, например `~/dotfiles`.
 
 ## Что делает install.sh
 
@@ -41,7 +41,7 @@ cd ~/.config
 ```sh
 xcode-select --install
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew bundle --file=~/.config/Brewfile
+brew bundle --file=~/.config/dotfiles/Brewfile
 ```
 
 Дальше шаги 3-8 выше. После этого в терминале выбери шрифт **JetBrainsMono Nerd Font**.
