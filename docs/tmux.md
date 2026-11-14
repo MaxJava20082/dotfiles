@@ -68,3 +68,8 @@ tmux kill-session -t work # убить сессию
 - Нет иконок/цветов: проверь, что в терминале включён Nerd Font; в конфиге `default-terminal "screen-256color"`.
 - Плагины не загрузились: `prefix` `I`, затем `prefix` `r`. Проверь, что есть `~/.tmux/plugins/tpm`.
 - `Ctrl+h/j/k/l` не работают внутри nvim: нужен плагин `christoomey/vim-tmux-navigator` на стороне nvim.
+
+## Серверный профиль
+
+`profiles/server/tmux.conf` сохраняет Ctrl+a, сплиты и vi-copy-mode,
+но не ставит TPM, темы, сохранение сессий и Nushell как default-command.

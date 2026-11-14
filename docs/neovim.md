@@ -34,3 +34,9 @@ Headless-установка (так делает `install.sh`):
 nvim --headless "+Lazy! sync" +qa
 nvim --headless "+lua require('util.mason_wait').run()" +qa
 ```
+
+## Сервер
+
+`--profile server` использует `profiles/server/nvim`: базовые клавиши и настройки
+без LazyVim/Mason/плагинов. `--with-dev` устанавливает рантаймы, но не включает LSP.
+Рабочий профиль macOS/CachyOS сохраняет описанную выше конфигурацию.

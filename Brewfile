@@ -1,10 +1,12 @@
-# macOS и Ubuntu: везде Homebrew.
+# macOS: Homebrew. Linux: packages/*.txt.
 # brew bundle --file=~/.config/dotfiles/Brewfile
 
 # --- Терминальные инструменты ---
 brew "git"
 brew "gh"
-brew "zsh"
+brew "zsh"            # запасная POSIX-совместимая оболочка
+brew "nushell"
+brew "starship"
 brew "neovim"
 brew "tmux"
 brew "lazygit"
@@ -41,16 +43,15 @@ brew "luajit"
 brew "luarocks"       # luacheck
 brew "cmake"
 brew "go"
-# Java (jdtls, checkstyle, spring-javaformat) и maven ставятся через SDKMAN, см. install.sh
+# Java/Maven установлены ниже; существующий SDKMAN остаётся доступен.
 
 if OS.mac?
   brew "llvm"         # clang для сборки treesitter-парсеров (рядом с Xcode CLT)
-  # Шрифт для иконок (nvim, eza, lazygit, p10k)
+  # Шрифт для иконок (nvim, eza, lazygit, Starship)
   cask "font-jetbrains-mono-nerd-font"
 end
 
-if OS.linux?
-  brew "gcc"          # C-компилятор для treesitter и сборки формул из исходников
-  brew "xclip"        # системный буфер обмена для nvim/tmux (X11)
-  # Шрифт на Linux ставится в install.sh (cask'ов в Linuxbrew нет)
-end
+
+# Java/Maven: системные пакеты вместо SDKMAN при новой установке.
+brew "openjdk@21"
+brew "maven"

@@ -1,0 +1,6 @@
+gui:
+  language: en
+  showIcons: false
+os:
+  edit: nvim
+# Built-in diff renderer; delta and Nerd Fonts are optional on the client.

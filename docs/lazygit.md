@@ -62,3 +62,8 @@ os:     # edit: nvim
 ```
 
 `lazygit/state.yml` (история, недавние репозитории) в git не попадает.
+
+## Серверный профиль
+
+`profiles/server/lazygit.yml` использует встроенный дифф без delta и иконок.
+Бинарник ставится в ~/.local/bin из официального GitHub Release с проверкой SHA256.

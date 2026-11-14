@@ -1,0 +1,15 @@
+ca-certificates
+git
+tmux
+neovim
+ripgrep
+fd-find
+fzf
+bat
+curl
+wget
+unzip
+zip
+jq
+htop
+python3

@@ -1,94 +1,121 @@
 # dotfiles
 
-Терминальная сборка для **macOS** и **Ubuntu**: Neovim (LazyVim), tmux, lazygit, zsh (Oh My Zsh + powerlevel10k), bat, yazi. Все пакеты ставятся через **Homebrew** (на Ubuntu это Linuxbrew), `apt` нужен только для зависимостей самого Homebrew.
+Личные настройки терминального окружения и три профиля установки:
 
-```
-nvim/      конфиг Neovim (LazyVim), lazy-lock.json
-tmux/      tmux.conf -> ~/.tmux.conf
-lazygit/   config.yml
-zsh/       zshrc -> ~/.zshrc, p10k.zsh -> ~/.p10k.zsh
-bat/       темы bat
-docs/      документация: tmux, lazygit, neovim, zsh/bat/yazi
-Brewfile   все brew-пакеты, языки и компиляторы (с ветками OS.mac? / OS.linux?)
-install.sh автоустановка (macOS и Ubuntu)
-```
+| Профиль | ОС | Пакеты | Настройки |
+|---|---|---|---|
+| `macos` | macOS | Homebrew, `Brewfile` | LazyVim, tmux + TPM, lazygit + delta, Nushell/Starship, zsh, bat, htop, Git |
+| `cachyos` | CachyOS | pacman, `packages/cachyos.txt` | То же рабочее окружение |
+| `server` | Ubuntu/Debian | apt + официальные GitHub Releases | Минимальный Neovim без плагинов, tmux без TPM, lazygit без delta/иконок, bat, htop, Git |
 
-## Быстрый старт
+Ubuntu/Debian поддерживаются только как серверный профиль. Homebrew на Linux не нужен.
+Все пакеты CachyOS берутся из официальных репозиториев; AUR сейчас не требуется.
 
-```sh
-git clone https://github.com/<user>/dotfiles ~/.config/dotfiles
-cd ~/.config/dotfiles
-./install.sh            # ./install.sh --dry-run покажет шаги без изменений
-```
+## Установка
 
-Скрипт идемпотентный: существующие файлы переименовываются в `*.bak.<timestamp>`, а не затираются.
-
-`install.sh` сам создаёт symlink'и: `~/.config/{nvim,lazygit,bat}`, `~/.zshrc`, `~/.p10k.zsh`, `~/.tmux.conf`. Репозиторий можно клонировать и в другое место, например `~/dotfiles`.
-
-## Что делает install.sh
-
-Скрипт сам определяет ОС (`uname`).
-
-| Шаг | macOS | Ubuntu |
-|---|---|---|
-| Базовые зависимости | Xcode Command Line Tools | `apt`: build-essential, procps, curl, file, git, unzip, zip |
-| Homebrew | `/opt/homebrew` или `/usr/local` | `/home/linuxbrew/.linuxbrew` |
-| Пакеты | `brew bundle` (+ llvm, шрифт-cask) | `brew bundle` (+ gcc, xclip) |
-| Шрифт | cask `font-jetbrains-mono-nerd-font` | скачивается в `~/.local/share/fonts` |
-| Shell | zsh уже есть | brew-zsh прописывается в `/etc/shells`, `chsh` |
-
-Дальше одинаково на обеих ОС:
-
-1. Oh My Zsh, powerlevel10k, `zsh-autosuggestions`, `zsh-syntax-highlighting`, `zsh-z`.
-2. SDKMAN, Java и Maven.
-3. Symlink'и `~/.zshrc`, `~/.p10k.zsh`, `~/.tmux.conf`, `~/.config/{nvim,lazygit,bat}`.
-4. TPM и tmux-плагины.
-5. `bat cache --build`.
-6. Neovim: `Lazy sync` и установка всех Mason-пакетов.
-
-## Ручная установка
-
-macOS:
+Клонируй репозиторий в любую постоянную папку, затем:
 
 ```sh
-xcode-select --install
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+./install.sh --dry-run                  # автоопределение ОС, только просмотр
+./install.sh                            # установить профиль этой ОС
+./install.sh --configs-only              # только ссылки, без пакетов и плагинов
 ```
 
-Ubuntu:
+Явный выбор: `--profile macos`, `--profile cachyos`, `--profile server`.
+Применение чужого профиля блокируется; `--dry-run` разрешает посмотреть любой.
+Не запускай установщик через sudo: sudo вызывается только для системных пакетов Linux.
+На macOS сначала установи [Homebrew](https://brew.sh) и Xcode Command Line Tools.
+На Linux нужны Bash и sudo; Python 3 установится с серверными пакетами.
+CachyOS выполняет полное `pacman -Syu`, чтобы избежать частичного обновления системы.
+
+Существующие конфиги перемещаются в закрытый каталог
+`${XDG_STATE_HOME:-~/.local/state}/dotfiles/backups/<дата>.<суффикс>`.
+`manifest.tsv` содержит соответствие резервной копии и исходного пути.
+Уже правильные ссылки остаются на месте. Данные не записываются при `--dry-run`,
+сетевые загрузки и пакетные менеджеры при этом не вызываются.
+
+## Сервер Ubuntu/Debian
 
 ```sh
-sudo apt-get update && sudo apt-get install -y build-essential procps curl file git unzip zip
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+./install.sh --profile server --dry-run
+./install.sh --profile server
+# Опциональные компоненты:
+./install.sh --profile server --with-shell --with-yazi --with-dev --dry-run
 ```
 
-Дальше на обеих ОС: `brew bundle --file=~/.config/dotfiles/Brewfile`, затем шаги 1-6 выше. После этого в терминале выбери шрифт **JetBrainsMono Nerd Font**.
+Базовые инструменты: Git, tmux, Neovim, lazygit, ripgrep, fd, fzf, bat, curl,
+wget, unzip, zip, jq, htop. Python 3 и CA certificates нужны установщику.
+`fd-find`/`bat` из apt получают локальные ссылки `~/.local/bin/fd`/`bat`.
+Добавь `export PATH="$HOME/.local/bin:$PATH"` в свой shell или войди заново,
+если ~/.profile уже добавляет этот каталог.
 
-### Языки и зачем они нужны
+- `--with-shell`: zsh, Nushell, Starship и eza. Текущая login shell не меняется;
+  запускай `nu` вручную. Старый Oh My Zsh используется, если уже существует.
+- `--with-yazi`: yazi и превью через ffmpeg, poppler, ImageMagick и 7zip.
+  Графического рабочего стола и шрифтов на сервере не требуется.
+- `--with-dev`: компиляторы, Node/npm, Python venv/pipx, Rust/Cargo, Lua,
+  Go, Java и Maven. Серверный Neovim остаётся минимальным, LSP не ставятся.
 
-| Что | Через | Зачем |
-|---|---|---|
-| node | brew | TS/JS/CSS/HTML/JSON/YAML LSP, prettier, eslint, vtsls |
-| python | brew | pyright, pylint, black |
-| rust | brew | selene, codelldb |
-| lua, luarocks | brew | luacheck |
-| gcc (Ubuntu) / llvm + Xcode CLT (macOS), cmake | brew / xcode-select | сборка treesitter-парсеров |
-| go | brew | Go-инструменты |
-| java, maven | SDKMAN | jdtls, checkstyle, spring-javaformat |
+lazygit и опциональные Nu/Starship/eza/yazi берутся из официальных GitHub Releases
+в `~/.local/bin` (Linux x86_64/ARM64). Проверяется SHA256 из GitHub API;
+без контрольной суммы или при несовпадении установка прекращается.
+Скачивается последний релиз, поэтому нужна совместимая с ним glibc.
+API имеет лимит запросов без авторизации. Старые Ubuntu/Debian могут потребовать
+обновления ОС для запуска последних бинарников; реальные Linux-установки здесь не проверены.
 
-## Документация
+SSH, firewall и системные службы установщик не меняет. Nerd Font выбирается
+на локальном компьютере с SSH-клиентом. Для базового серверного профиля иконки выключены.
 
-- [tmux](docs/tmux.md)
-- [lazygit](docs/lazygit.md)
-- [Neovim и Mason](docs/neovim.md)
-- [zsh, bat, yazi](docs/zsh.md)
+## Удаление и переустановка на той же ОС
 
-## Проблемы
+```sh
+./uninstall.sh --profile macos                         # только просмотр
+./uninstall.sh --profile macos --packages               # просмотр удаления утилит
+./uninstall.sh --profile macos --packages --apply       # запросит DELETE
+# Более полная очистка, сначала просмотреть:
+./uninstall.sh --profile macos --packages --include-shared --purge-data --purge-sdkman
+```
 
-- Квадратики вместо иконок: не выбран Nerd Font в терминале (при SSH шрифт ставится на локальной машине).
-- Ubuntu: `brew: command not found` в новом shell: проверь блок Homebrew в начале `~/.zshrc`.
-- Ubuntu: нет буфера обмена в nvim/tmux: нужен `xclip` (есть в Brewfile) и X11/Wayland-сессия.
-- Mason не поставил пакет: `:Mason`, `:MasonLog`; чаще всего не хватает node/python/JDK.
-- Плагины tmux не подтянулись: `prefix` `I` (prefix = `Ctrl+a`).
-- Тема bat не видна: `bat cache --build`.
+Для CachyOS используй `--profile cachyos`, для Ubuntu/Debian — `--profile server`.
+Перед применением закрой инструменты и сессии tmux. Для серверных опций укажи те же
+`--with-shell`, `--with-yazi`, `--with-dev`, что использовались при установке.
+
+По умолчанию переносит только конфиги. `--packages` удаляет утилиты выбранного
+профиля, включая те, что были установлены до dotfiles. Это сброс выбранного набора,
+а не откат только последней установки. `--include-shared` дополнительно включает
+Git, curl, языки, компиляторы и другие общие зависимости — полный список виден
+в предварительном просмотре. macOS удаляет brew-пакеты, системные /usr/bin остаются.
+Пакетный менеджер может отказать из-за зависимых пакетов: принудительное удаление,
+`autoremove`, удаление баз данных пакетных менеджеров не используются.
+
+`--purge-data` переносит кеши Neovim/bat, плагины tmux, сохранения сессий,
+историю lazygit и (с `--with-shell`) историю Nushell в резервную копию.
+`--purge-sdkman` отдельно переносит весь ~/.sdkman, включая все его Java/SDK.
+Резервные копии остаются даже при полной очистке, удаляй их вручную после проверки.
+История zsh/bash, учётные данные GitHub, проекты, SSH и сам репозиторий сохраняются.
+После удаления запускай `./install.sh` с тем же профилем и опциями.
+
+## Что синхронизировано с компьютера
+
+[Отчёт сравнения](docs/config-sync.md). Помимо исходных папок добавлены `htop/`
+и `git/`. Автор коммитов в `git/gitconfig` — личные name/email владельца.
+Перед использованием другим человеком измени их.
+На macOS учитываются стандартные пути `~/Library/Application Support/{nushell,lazygit}`;
+при заданном XDG_CONFIG_HOME используется он. Starship читает `$XDG_CONFIG_HOME/starship.toml`.
+
+Java/Maven при новой установке берутся из Homebrew/pacman/apt. Существующий SDKMAN
+остаётся доступен в zsh/Nu. Neovim использует `/bin/bash` для внешних команд;
+раньше был жёстко задан fish, которого нет в списке установки.
+
+## Документация и проверки
+
+- [Neovim](docs/neovim.md), [tmux](docs/tmux.md), [lazygit](docs/lazygit.md), [shell](docs/zsh.md)
+- [Ограничения](warn.md)
+
+```sh
+python3 -m unittest discover -s tests -v
+bash -n install.sh uninstall.sh scripts/common.sh
+zsh -n zsh/zshrc
+```
+
+Тесты работают с временным HOME. Настоящие пакеты не ставятся и не удаляются.

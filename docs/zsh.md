@@ -1,13 +1,25 @@
-# zsh, bat, yazi
+# Nushell, Starship, zsh, bat, yazi
 
-## zsh
+## Nushell + Starship
 
-Конфиг: `zsh/zshrc` (symlink на `~/.zshrc`), prompt: `zsh/p10k.zsh` (`~/.p10k.zsh`).
+Конфиги: `nushell/env.nu`, `nushell/config.nu`, `starship/starship.toml`.
+На macOS Nu читает `~/Library/Application Support/nushell`; при XDG_CONFIG_HOME — `$XDG_CONFIG_HOME/nushell`.
+Starship загружается из `autoload/starship.nu`; после обновления Starship пересоздай файл командой `starship init nu | save -f ($nu.default-config-dir | path join autoload/starship.nu)`.
 
-- Oh My Zsh + тема powerlevel10k. Перенастройка prompt: `p10k configure`.
-- Плагины: `git`, `docker`, `zsh-autosuggestions`, `zsh-syntax-highlighting`, `z` (в custom стоит `zsh-z`: `z <часть пути>` прыгает в частые директории).
-- Алиасы: `ls` -> `eza --long --all --tree --level=1 --icons=always`, `cat` -> `bat`, `yy` -> `yazi`.
-- SDKMAN (Java, Maven) и pipx (`~/.local/bin`) подключены в конце файла.
+- Prompt: цветные сегменты пути, Git, окружения и времени; ввод на второй строке.
+- `ls`, `open`, `cat` — встроенные команды Nu; `ll`/`lt` — eza, `c` — bat, `lg` — lazygit.
+- `yy` — Yazi с переходом в выбранную папку после выхода.
+- На macOS `o` открывает файл системным приложением.
+- SDKMAN candidates добавляются в PATH; Java получает JAVA_HOME.
+- `sdk` запускает SDKMAN в bash; после смены версии перезапусти Nu.
+- История SQLite, нечувствительное к регистру fuzzy-дополнение, редактирование Emacs.
+- Для программ с POSIX-синтаксисом используй `bash -c` или `zsh -c`.
+
+## Запасной zsh
+
+`zsh/zshrc` сохраняет Oh My Zsh и SDKMAN, prompt использует Starship.
+Для запуска Nushell в терминале укажи команду `nu --login`.
+Системная login shell не меняется: это сохраняет совместимость SSH и скриптов.
 
 ## bat
 
@@ -32,3 +44,9 @@
 | `q` | выйти |
 
 Конфигурация yazi (`~/.config/yazi`) пока не создана, используются значения по умолчанию.
+
+## Профили
+
+На сервере shell ставится только с `--with-shell`; по умолчанию остаётся текущая оболочка.
+Starship использует XDG_CONFIG_HOME, если он задан. Новые JDK/Maven ставятся нативным
+пакетным менеджером, существующий SDKMAN сохраняется.

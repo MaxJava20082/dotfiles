@@ -1,0 +1,68 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+add_newline = true
+command_timeout = 1000
+format = """
+[](blue)\
+$directory\
+[](fg:blue bg:green)\
+$git_branch$git_status\
+[](fg:green bg:purple)\
+$nodejs$python$rust$golang$java\
+[](fg:purple bg:slate)\
+$cmd_duration$time\
+[](slate)\
+$line_break$character"""
+palette = 'night'
+[palettes.night]
+blue = '#89b4fa'
+green = '#a6e3a1'
+purple = '#cba6f7'
+slate = '#45475a'
+ink = '#1e1e2e'
+text = '#cdd6f4'
+[directory]
+style = 'fg:ink bg:blue bold'
+format = '[  $path$read_only ]($style)'
+truncation_length = 3
+truncation_symbol = '…/'
+read_only = ' '
+[git_branch]
+symbol = ''
+style = 'fg:ink bg:green'
+format = '[ $symbol $branch ]($style)'
+[git_status]
+style = 'fg:ink bg:green'
+format = '[$all_status$ahead_behind ]($style)'
+[nodejs]
+symbol = ''
+style = 'fg:ink bg:purple'
+format = '[ $symbol $version ]($style)'
+[python]
+symbol = ''
+style = 'fg:ink bg:purple'
+format = '[ $symbol $version( $virtualenv) ]($style)'
+[rust]
+symbol = ''
+style = 'fg:ink bg:purple'
+format = '[ $symbol $version ]($style)'
+[golang]
+symbol = ''
+style = 'fg:ink bg:purple'
+format = '[ $symbol $version ]($style)'
+[java]
+symbol = ''
+style = 'fg:ink bg:purple'
+format = '[ $symbol $version ]($style)'
+[cmd_duration]
+min_time = 2000
+style = 'fg:text bg:slate'
+format = '[ 󱎫 $duration ]($style)'
+[time]
+disabled = false
+time_format = '%H:%M'
+style = 'fg:text bg:slate'
+format = '[  $time ]($style)'
+[character]
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'
+vimcmd_symbol = '[❮](bold purple)'

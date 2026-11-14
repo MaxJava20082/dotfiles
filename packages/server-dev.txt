@@ -1,0 +1,13 @@
+build-essential
+nodejs
+npm
+python3-venv
+pipx
+rustc
+cargo
+lua5.4
+luarocks
+cmake
+golang-go
+default-jdk
+maven
